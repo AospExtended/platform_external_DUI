@@ -149,19 +149,19 @@ public class PulseController {
 
         void register() {
             mContext.getContentResolver().registerContentObserver(
-                    Settings.Secure.getUriFor(Settings.Secure.FLING_PULSE_ENABLED), false, this,
+                    Settings.System.getUriFor(Settings.System.FLING_PULSE_ENABLED), false, this,
                     UserHandle.USER_ALL);
             mContext.getContentResolver().registerContentObserver(
-                    Settings.Secure.getUriFor(Settings.Secure.PULSE_RENDER_STYLE_URI), false, this,
+                    Settings.System.getUriFor(Settings.System.PULSE_RENDER_STYLE_URI), false, this,
                     UserHandle.USER_ALL);
         }
 
         @Override
         public void onChange(boolean selfChange, Uri uri) {
-            if (uri.equals(Settings.Secure.getUriFor(Settings.Secure.FLING_PULSE_ENABLED))) {
+            if (uri.equals(Settings.System.getUriFor(Settings.System.FLING_PULSE_ENABLED))) {
                 updateEnabled();
                 doLinkage();
-            } else if (uri.equals(Settings.Secure.getUriFor(Settings.Secure.PULSE_RENDER_STYLE_URI))) {
+            } else if (uri.equals(Settings.System.getUriFor(Settings.System.PULSE_RENDER_STYLE_URI))) {
                 updateRenderMode();
                 if (mPulseObserver != null) {
                     loadRenderer();
@@ -175,13 +175,13 @@ public class PulseController {
         }
 
         void updateEnabled() {
-            mPulseEnabled = Settings.Secure.getIntForUser(mContext.getContentResolver(),
-                    Settings.Secure.FLING_PULSE_ENABLED, 0, UserHandle.USER_CURRENT) == 1;
+            mPulseEnabled = Settings.System.getIntForUser(mContext.getContentResolver(),
+                    Settings.System.FLING_PULSE_ENABLED, 0, UserHandle.USER_CURRENT) == 1;
         }
 
         void updateRenderMode() {
-            mPulseStyle = Settings.Secure.getIntForUser(mContext.getContentResolver(),
-                    Settings.Secure.PULSE_RENDER_STYLE_URI, RENDER_STYLE_CM, UserHandle.USER_CURRENT);
+            mPulseStyle = Settings.System.getIntForUser(mContext.getContentResolver(),
+                    Settings.System.PULSE_RENDER_STYLE_URI, RENDER_STYLE_CM, UserHandle.USER_CURRENT);
         }
     };
 

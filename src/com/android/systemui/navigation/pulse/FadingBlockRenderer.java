@@ -201,35 +201,35 @@ public class FadingBlockRenderer extends Renderer implements ColorAnimator.Color
         void register() {
             ContentResolver resolver = mContext.getContentResolver();
             resolver.registerContentObserver(
-                    Settings.Secure.getUriFor(Settings.Secure.FLING_PULSE_COLOR), false, this,
+                    Settings.System.getUriFor(Settings.System.FLING_PULSE_COLOR), false, this,
                     UserHandle.USER_ALL);
             resolver.registerContentObserver(
-                    Settings.Secure.getUriFor(Settings.Secure.FLING_PULSE_LAVALAMP_ENABLED), false,
+                    Settings.System.getUriFor(Settings.System.FLING_PULSE_LAVALAMP_ENABLED), false,
                     this,
                     UserHandle.USER_ALL);
             resolver.registerContentObserver(
-                    Settings.Secure.getUriFor(Settings.Secure.FLING_PULSE_LAVALAMP_SPEED), false,
+                    Settings.System.getUriFor(Settings.System.FLING_PULSE_LAVALAMP_SPEED), false,
                     this,
                     UserHandle.USER_ALL);
             resolver.registerContentObserver(
-                    Settings.Secure.getUriFor(Settings.Secure.PULSE_CUSTOM_DIMEN), false, this,
+                    Settings.System.getUriFor(Settings.System.PULSE_CUSTOM_DIMEN), false, this,
                     UserHandle.USER_ALL);
             resolver.registerContentObserver(
-                    Settings.Secure.getUriFor(Settings.Secure.PULSE_CUSTOM_DIV), false, this,
+                    Settings.System.getUriFor(Settings.System.PULSE_CUSTOM_DIV), false, this,
                     UserHandle.USER_ALL);
             resolver.registerContentObserver(
-                    Settings.Secure.getUriFor(Settings.Secure.PULSE_FILLED_BLOCK_SIZE), false,
+                    Settings.System.getUriFor(Settings.System.PULSE_FILLED_BLOCK_SIZE), false,
                     this,
                     UserHandle.USER_ALL);
             resolver.registerContentObserver(
-                    Settings.Secure.getUriFor(Settings.Secure.PULSE_EMPTY_BLOCK_SIZE), false, this,
+                    Settings.System.getUriFor(Settings.System.PULSE_EMPTY_BLOCK_SIZE), false, this,
                     UserHandle.USER_ALL);
             resolver.registerContentObserver(
-                    Settings.Secure.getUriFor(Settings.Secure.PULSE_CUSTOM_FUDGE_FACTOR), false,
+                    Settings.System.getUriFor(Settings.System.PULSE_CUSTOM_FUDGE_FACTOR), false,
                     this,
                     UserHandle.USER_ALL);
             resolver.registerContentObserver(
-                    Settings.Secure.getUriFor(Settings.Secure.PULSE_AUTO_COLOR), false,
+                    Settings.System.getUriFor(Settings.System.PULSE_AUTO_COLOR), false,
                     this,
                     UserHandle.USER_ALL);
         }
@@ -243,23 +243,23 @@ public class FadingBlockRenderer extends Renderer implements ColorAnimator.Color
             ContentResolver resolver = mContext.getContentResolver();
             final Resources res = mContext.getResources();
 
-            mAutoColor = Settings.Secure.getIntForUser(
-                    resolver, Settings.Secure.PULSE_AUTO_COLOR, 0,
+            mAutoColor = Settings.System.getIntForUser(
+                    resolver, Settings.System.PULSE_AUTO_COLOR, 0,
                     UserHandle.USER_CURRENT) == 1;
 
-            mLavaLampEnabled = !mAutoColor && Settings.Secure.getIntForUser(resolver,
-                    Settings.Secure.FLING_PULSE_LAVALAMP_ENABLED, 1, UserHandle.USER_CURRENT) == 1;
+            mLavaLampEnabled = !mAutoColor && Settings.System.getIntForUser(resolver,
+                    Settings.System.FLING_PULSE_LAVALAMP_ENABLED, 1, UserHandle.USER_CURRENT) == 1;
 
-            mUserColor = Settings.Secure.getIntForUser(resolver,
-                    Settings.Secure.FLING_PULSE_COLOR,
+            mUserColor = Settings.System.getIntForUser(resolver,
+                    Settings.System.FLING_PULSE_COLOR,
                     mContext.getResources().getColor(R.color.config_pulseFillColor),
                     UserHandle.USER_CURRENT);
             if (!mLavaLampEnabled) {
                 int lastColor = mController.getAlbumArtColor();
                 mPaint.setColor(mAutoColor && lastColor != -1 ? lastColor : mUserColor);
             }
-            int time = Settings.Secure.getIntForUser(resolver,
-                    Settings.Secure.FLING_PULSE_LAVALAMP_SPEED, 10000,
+            int time = Settings.System.getIntForUser(resolver,
+                    Settings.System.FLING_PULSE_LAVALAMP_SPEED, 10000,
                     UserHandle.USER_CURRENT);
             mLavaLamp.setAnimationTime(time);
             if (mLavaLampEnabled && mIsValidStream) {
@@ -267,20 +267,20 @@ public class FadingBlockRenderer extends Renderer implements ColorAnimator.Color
             } else {
                 mLavaLamp.stop();
             }
-            int emptyBlock = Settings.Secure.getIntForUser(
-                    resolver, Settings.Secure.PULSE_EMPTY_BLOCK_SIZE, 1,
+            int emptyBlock = Settings.System.getIntForUser(
+                    resolver, Settings.System.PULSE_EMPTY_BLOCK_SIZE, 1,
                     UserHandle.USER_CURRENT);
-            int customDimen = Settings.Secure.getIntForUser(
-                    resolver, Settings.Secure.PULSE_CUSTOM_DIMEN, 14,
+            int customDimen = Settings.System.getIntForUser(
+                    resolver, Settings.System.PULSE_CUSTOM_DIMEN, 14,
                     UserHandle.USER_CURRENT);
-            int numDivision = Settings.Secure.getIntForUser(
-                    resolver, Settings.Secure.PULSE_CUSTOM_DIV, 16,
+            int numDivision = Settings.System.getIntForUser(
+                    resolver, Settings.System.PULSE_CUSTOM_DIV, 16,
                     UserHandle.USER_CURRENT);
-            int fudgeFactor = Settings.Secure.getIntForUser(
-                    resolver, Settings.Secure.PULSE_CUSTOM_FUDGE_FACTOR, 4,
+            int fudgeFactor = Settings.System.getIntForUser(
+                    resolver, Settings.System.PULSE_CUSTOM_FUDGE_FACTOR, 4,
                     UserHandle.USER_CURRENT);
-            int filledBlock = Settings.Secure.getIntForUser(
-                    resolver, Settings.Secure.PULSE_FILLED_BLOCK_SIZE, 4,
+            int filledBlock = Settings.System.getIntForUser(
+                    resolver, Settings.System.PULSE_FILLED_BLOCK_SIZE, 4,
                     UserHandle.USER_CURRENT);
 
             mPathEffect1 = getLimitedDimenValue(filledBlock, 4, 8, res);

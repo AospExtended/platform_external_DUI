@@ -234,26 +234,26 @@ public class SolidLineRenderer extends Renderer implements ColorAnimator.ColorAn
         void register() {
             ContentResolver resolver = mContext.getContentResolver();
             resolver.registerContentObserver(
-                    Settings.Secure.getUriFor(Settings.Secure.FLING_PULSE_COLOR), false, this,
+                    Settings.System.getUriFor(Settings.System.FLING_PULSE_COLOR), false, this,
                     UserHandle.USER_ALL);
             resolver.registerContentObserver(
-                    Settings.Secure.getUriFor(Settings.Secure.FLING_PULSE_LAVALAMP_ENABLED), false,
+                    Settings.System.getUriFor(Settings.System.FLING_PULSE_LAVALAMP_ENABLED), false,
                     this,
                     UserHandle.USER_ALL);
             resolver.registerContentObserver(
-                    Settings.Secure.getUriFor(Settings.Secure.PULSE_SOLID_FUDGE_FACTOR), false, this,
+                    Settings.System.getUriFor(Settings.System.PULSE_SOLID_FUDGE_FACTOR), false, this,
                     UserHandle.USER_ALL);
             resolver.registerContentObserver(
-                    Settings.Secure.getUriFor(Settings.Secure.PULSE_LAVALAMP_SOLID_SPEED), false, this,
+                    Settings.System.getUriFor(Settings.System.PULSE_LAVALAMP_SOLID_SPEED), false, this,
                     UserHandle.USER_ALL);
             resolver.registerContentObserver(
-                    Settings.Secure.getUriFor(Settings.Secure.PULSE_SOLID_UNITS_COUNT), false, this,
+                    Settings.System.getUriFor(Settings.System.PULSE_SOLID_UNITS_COUNT), false, this,
                     UserHandle.USER_ALL);
             resolver.registerContentObserver(
-                    Settings.Secure.getUriFor(Settings.Secure.PULSE_SOLID_UNITS_OPACITY), false, this,
+                    Settings.System.getUriFor(Settings.System.PULSE_SOLID_UNITS_OPACITY), false, this,
                     UserHandle.USER_ALL);
             resolver.registerContentObserver(
-                    Settings.Secure.getUriFor(Settings.Secure.PULSE_AUTO_COLOR), false, this,
+                    Settings.System.getUriFor(Settings.System.PULSE_AUTO_COLOR), false, this,
                     UserHandle.USER_ALL);
         }
 
@@ -265,23 +265,23 @@ public class SolidLineRenderer extends Renderer implements ColorAnimator.ColorAn
         public void updateSettings() {
             ContentResolver resolver = mContext.getContentResolver();
 
-            mAutoColor = Settings.Secure.getIntForUser(
-                    resolver, Settings.Secure.PULSE_AUTO_COLOR, 0,
+            mAutoColor = Settings.System.getIntForUser(
+                    resolver, Settings.System.PULSE_AUTO_COLOR, 0,
                     UserHandle.USER_CURRENT) == 1;
 
-            mLavaLampEnabled = !mAutoColor && Settings.Secure.getIntForUser(resolver,
-                    Settings.Secure.FLING_PULSE_LAVALAMP_ENABLED, 1, UserHandle.USER_CURRENT) == 1;
+            mLavaLampEnabled = !mAutoColor && Settings.System.getIntForUser(resolver,
+                    Settings.System.FLING_PULSE_LAVALAMP_ENABLED, 1, UserHandle.USER_CURRENT) == 1;
 
-            mColor = Settings.Secure.getIntForUser(resolver,
-                    Settings.Secure.FLING_PULSE_COLOR,
+            mColor = Settings.System.getIntForUser(resolver,
+                    Settings.System.FLING_PULSE_COLOR,
                     Color.WHITE,
                     UserHandle.USER_CURRENT);
             if (!mLavaLampEnabled) {
                 int lastColor = mController.getAlbumArtColor();
                 mPaint.setColor(mAutoColor && lastColor != -1 ? lastColor : mColor);
             }
-            int lavaLampSpeed = Settings.Secure.getIntForUser(resolver,
-                    Settings.Secure.PULSE_LAVALAMP_SOLID_SPEED, 10 * 1000,
+            int lavaLampSpeed = Settings.System.getIntForUser(resolver,
+                    Settings.System.PULSE_LAVALAMP_SOLID_SPEED, 10 * 1000,
                     UserHandle.USER_CURRENT);
             mLavaLamp.setAnimationTime(lavaLampSpeed);
             if (mLavaLampEnabled && mIsValidStream) {
@@ -290,21 +290,21 @@ public class SolidLineRenderer extends Renderer implements ColorAnimator.ColorAn
                 mLavaLamp.stop();
             }
             // putFloat, getFloat is better. catch it next time
-            mDbFuzzFactor = Settings.Secure.getIntForUser(
-                    resolver, Settings.Secure.PULSE_SOLID_FUDGE_FACTOR, 5,
+            mDbFuzzFactor = Settings.System.getIntForUser(
+                    resolver, Settings.System.PULSE_SOLID_FUDGE_FACTOR, 5,
                     UserHandle.USER_CURRENT);
 
             int oldUnits = mUnits;
-            mUnits = Settings.Secure.getIntForUser(
-                    resolver, Settings.Secure.PULSE_SOLID_UNITS_COUNT, 64,
+            mUnits = Settings.System.getIntForUser(
+                    resolver, Settings.System.PULSE_SOLID_UNITS_COUNT, 64,
                     UserHandle.USER_CURRENT);
             if (mUnits != oldUnits) {
                 mFFTPoints = new float[mUnits * 4];
                 onSizeChanged(0, 0, 0, 0);
             }
 
-            int solidUnitsColor = Settings.Secure.getIntForUser(
-                    resolver, Settings.Secure.PULSE_SOLID_UNITS_OPACITY, 200,
+            int solidUnitsColor = Settings.System.getIntForUser(
+                    resolver, Settings.System.PULSE_SOLID_UNITS_OPACITY, 200,
                     UserHandle.USER_CURRENT);
             mFadePaint.setColor(Color.argb(mAutoColor ? 255 : solidUnitsColor, 255, 255, 255));
         }

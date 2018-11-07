@@ -15,17 +15,6 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-
-    <!-- The factor to increase gesture touch slop. It seems the default values
-         from ViewConfiguration are too small for Fling. Often taps and long presses
-         are canceled when they shouldn't be. Applies only to Fling gesture detector
-
-         touchSlop = ViewConfiguration.getTouchSlop() * ((100 + increase_factor) / 100))
-
-         Default value is a 35% increase in allowed "sloppiness".
-         Adjust in overlay for device specific precision -->
-    <item name="config_fling_touchslop_increase_factor" format="float" type="dimen">1.35</item>
-
     <!-- Default bar fill
          User can define this in settings
          Here for reference-->
