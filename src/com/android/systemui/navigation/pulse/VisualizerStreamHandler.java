@@ -28,6 +28,9 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 
+import com.android.systemui.Dependency;
+import com.android.systemui.UiOffloadThread;
+
 public class VisualizerStreamHandler {
     public interface Listener {
         public void onStreamAnalyzed(boolean isValid);
@@ -60,6 +63,8 @@ public class VisualizerStreamHandler {
     protected PulseController mController;
     protected Listener mListener;
 
+    private final UiOffloadThread mUiOffloadThread;
+
     private Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message m) {
@@ -85,6 +90,7 @@ public class VisualizerStreamHandler {
         mContext = context;
         mController = controller;
         mListener = listener;
+        mUiOffloadThread = Dependency.get(UiOffloadThread.class);
     }
 
     /**
@@ -93,52 +99,54 @@ public class VisualizerStreamHandler {
      * @param player - MediaPlayer instance to link to
      */
     public final void link(int audioSessionId) {
-        if (mVisualizer != null && audioSessionId != mAudioSessionId) {
-            mVisualizer.setEnabled(false);
-            mVisualizer.release();
-            mVisualizer = null;
-        }
-        pause();
-        resetAnalyzer();
-        mAudioSessionId = audioSessionId;
-
-        if (mVisualizer == null) {
-            try {
-                mVisualizer = new Visualizer(audioSessionId);
-            } catch (Exception e) {
-                Log.e(TAG, "Error enabling visualizer!", e);
-                return;
+        mUiOffloadThread.submit(() -> {
+            if (mVisualizer != null && audioSessionId != mAudioSessionId) {
+                mVisualizer.setEnabled(false);
+                mVisualizer.release();
+                mVisualizer = null;
             }
-            mVisualizer.setEnabled(false);
-            mVisualizer.setCaptureSize(Visualizer.getCaptureSizeRange()[1]);
+            pause();
+            resetAnalyzer();
+            mAudioSessionId = audioSessionId;
 
-            Visualizer.OnDataCaptureListener captureListener = new Visualizer.OnDataCaptureListener() {
-                @Override
-                public void onWaveFormDataCapture(Visualizer visualizer, byte[] bytes,
-                        int samplingRate) {
-                    if (ENABLE_WAVEFORM) {
-                        analyze(bytes);
-                        if (isValidStream() && !mIsPaused) {
-                            mListener.onWaveFormUpdate(bytes);
+            if (mVisualizer == null) {
+                try {
+                    mVisualizer = new Visualizer(audioSessionId);
+                } catch (Exception e) {
+                    Log.e(TAG, "Error enabling visualizer!", e);
+                    return;
+                }
+                mVisualizer.setEnabled(false);
+                mVisualizer.setCaptureSize(Visualizer.getCaptureSizeRange()[1]);
+
+                Visualizer.OnDataCaptureListener captureListener = new Visualizer.OnDataCaptureListener() {
+                    @Override
+                    public void onWaveFormDataCapture(Visualizer visualizer, byte[] bytes,
+                            int samplingRate) {
+                        if (ENABLE_WAVEFORM) {
+                            analyze(bytes);
+                            if (isValidStream() && !mIsPaused) {
+                                mListener.onWaveFormUpdate(bytes);
+                            }
                         }
                     }
-                }
 
-                @Override
-                public void onFftDataCapture(Visualizer visualizer, byte[] bytes,
-                        int samplingRate) {
-                    analyze(bytes);
-                    if (isValidStream() && !mIsPaused) {
-                        mListener.onFFTUpdate(bytes);
+                    @Override
+                    public void onFftDataCapture(Visualizer visualizer, byte[] bytes,
+                            int samplingRate) {
+                        analyze(bytes);
+                        if (isValidStream() && !mIsPaused) {
+                            mListener.onFFTUpdate(bytes);
+                        }
                     }
-                }
-            };
+                };
 
-            mVisualizer.setDataCaptureListener(captureListener,
-                    (int) (Visualizer.getMaxCaptureRate() * 0.75), ENABLE_WAVEFORM, true);
+                mVisualizer.setDataCaptureListener(captureListener,
+                        (int) (Visualizer.getMaxCaptureRate() * 0.75), ENABLE_WAVEFORM, true);
 
-        }
-        mVisualizer.setEnabled(true);
+            }
+            mVisualizer.setEnabled(true);
+        });
     }
 
     public final void unlink() {
